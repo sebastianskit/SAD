@@ -18,6 +18,7 @@ public class TestReadLine { // Clase principal para probar la funcionalidad de l
             String result = reader.readLine(); // Lee la línea editada por el usuario.
             System.out.println("\nLinea editada: " + result); // Muestra el resultado final después de que el usuario
             // presione Enter.
+            System.out.println();
         } catch (IOException e) {
             e.printStackTrace(); // Muestra un error si ocurre algún problema durante la lectura.
         }

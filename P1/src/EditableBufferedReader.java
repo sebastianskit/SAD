@@ -24,7 +24,7 @@ public class EditableBufferedReader extends BufferedReader { // Extiende Buffere
         if (isWindows) {
             // En Windows no se puede cambiar directamente al modo raw, por lo tanto se
             // muestra un mensaje.
-            System.out.println("------>Modo RAW no es soportado directamente en Windows");
+            System.out.println("------> Modo RAW no es soportado directamente en Windows");
         } else {
             // En sistemas Unix, ejecuta un comando para poner el terminal en modo raw.
             Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c", "stty raw -echo < /dev/tty" });
