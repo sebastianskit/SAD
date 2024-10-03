@@ -1,14 +1,21 @@
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 
-import java.io.*;
+public class TestReadLine {
+    @SuppressWarnings("deprecation")
+    public static void main(String[] args) {
+        Line line = new Line();
+        Console console = new Console();
+        line.addObserver(console); // La consola observa los cambios en la línea
 
-class TestReadLine {
-  public static void main(String[] args) {
-   BufferedReader in = new EditableBufferedReader(
-      new InputStreamReader(System.in));
-    String str = null;
-    try {
-      str = in.readLine();
-    } catch (IOException e) { e.printStackTrace(); }
-    System.out.println("\nline is: " + str);
-  }
+        BufferedReader reader = new EditableBufferedReader(new InputStreamReader(System.in), line);
+
+        try {
+            String result = reader.readLine();
+            System.out.println("\nResultado final: " + result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
