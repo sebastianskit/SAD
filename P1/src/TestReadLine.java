@@ -10,12 +10,13 @@ public class TestReadLine { // Clase principal para probar la funcionalidad de l
         Console console = new Console(); // Crea una consola que observará la línea.
         line.addObserver(console); // Añade la consola como observadora de la línea.
 
-        BufferedReader reader = new EditableBufferedReader(new InputStreamReader(System.in), line); // Crea el lector
+        BufferedReader reader = new EditableBufferedReader(console, new InputStreamReader(System.in), line); // Crea el
+                                                                                                             // lector
         // editable.
 
         try {
             String result = reader.readLine(); // Lee la línea editada por el usuario.
-            System.out.println("\nResultado final: " + result); // Muestra el resultado final después de que el usuario
+            System.out.println("\nLinea editada: " + result); // Muestra el resultado final después de que el usuario
             // presione Enter.
         } catch (IOException e) {
             e.printStackTrace(); // Muestra un error si ocurre algún problema durante la lectura.

@@ -7,14 +7,17 @@ public class EditableBufferedReader extends BufferedReader { // Extiende Buffere
     @SuppressWarnings("unused")
     private boolean insertMode; // Indica si estamos en modo de inserción (true por defecto).
     private boolean isWindows; // Verifica si estamos en un sistema Windows.
+    private Console console;
 
-    public EditableBufferedReader(InputStreamReader in, Line line) { // Constructor que inicializa el lector y la línea
-                                                                     // editable.
+    public EditableBufferedReader(Console console, InputStreamReader in, Line line) { // Constructor que inicializa el
+                                                                                      // lector y la línea
+        // editable.
         super(in);
+        this.console = console;
         this.line = line;
         this.insertMode = true; // El modo insertar está activado por defecto.
         this.isWindows = System.getProperty("os.name").toLowerCase().contains("win"); // Verifica si el sistema es
-                                                                                      // Windows.
+        // Windows.
     }
 
     public void setRaw() throws IOException { // Método que pone el terminal en modo "raw" (sin procesar).
@@ -28,11 +31,13 @@ public class EditableBufferedReader extends BufferedReader { // Extiende Buffere
         }
     }
 
-    public void unsetRaw() throws IOException { // Método para restaurar el terminal al modo normal.
+    public void unsetRaw(Console console) throws IOException { // Método para restaurar el terminal al modo normal.
         if (isWindows) {
+            console.clearConsole(); // Limpiamos consola para no acumular lineas.
             // En Windows no se requiere hacer nada, simplemente muestra un mensaje.
-            System.out.println("Revirtiendo Modo RAW en Windows no es necesario");
+            System.out.println("------> Revirtiendo Modo RAW en Windows no es necesario");
         } else {
+            console.clearConsole(); // Limpiamos consola para no acumular lineas.
             // En sistemas Unix, ejecuta un comando para restaurar el modo normal del
             // terminal.
             Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c", "stty cooked echo < /dev/tty" });
@@ -45,9 +50,10 @@ public class EditableBufferedReader extends BufferedReader { // Extiende Buffere
         int input;
         while ((input = read()) != '\r') { // Lee cada carácter hasta que se presiona Enter (detenido por '\r').
             handleInput(input); // Llama al método para manejar la entrada del usuario (caracteres, flechas,
-                                // etc.).
+            // etc.).
         }
-        unsetRaw(); // Restaura el terminal al modo normal después de capturar la entrada.
+
+        unsetRaw(console); // Restaura el terminal al modo normal después de capturar la entrada.
         return line.getContent(); // Retorna el contenido actual de la línea editada.
     }
 

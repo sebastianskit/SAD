@@ -19,7 +19,7 @@ public class Console implements Observer { // Implementa la interfaz Observer, e
         moveCursorToPosition(line.getCursorPosition()); // Mueve el cursor a la posición correcta.
     }
 
-    private void clearConsole() { // Método que limpia la consola usando códigos ANSI.
+    public void clearConsole() { // Método que limpia la consola usando códigos ANSI.
         System.out.print("\033[H\033[2J"); // Código ANSI para limpiar la consola y mover el cursor al inicio.
         System.out.flush(); // Fuerza la limpieza de la consola.
     }
