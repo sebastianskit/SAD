@@ -36,42 +36,72 @@ screenMatrix = [
     ]
 
 player = "X"
-playerTurn = "Turn of X"
 gameOver = False 
 initScreenStatus = True
+gameScreenStatus = False
 
 #Pantalla
 screen = pygame.display.set_mode(TOTAL_SIZE)
 font = pygame.font.Font(None,40)
 font2 = pygame.font.Font(None,30)
-title = font.render("Welcome to TicTacToe Game ", True, BLACK)
-caption = font.render("Press SPACE to Play ", True, BLACK)
-authors = font2.render("Arnau Ruiz and Sebastian Skit ", True, BLACK)
-titleWidth = title.get_width()/2
-captionWidth = caption.get_width()/2
-authorsWidth = authors.get_width()/2
+font3 = pygame.font.Font(None,80)
+
+titleText = font.render("Welcome to TicTacToe Game ", True, BLACK)
+captionText = font.render("Press SPACE to Play ", True, BLACK)
+authorsText = font2.render("Arnau Ruiz and Sebastian Skit ", True, BLACK)
+turnText = font.render(f"Turn of {player} !", True, WHITE)
+resetText = font2.render("Press R to Restart", True, WHITE)
+
+titleWidth = titleText.get_width()/2
+captionWidth = captionText.get_width()/2
+authorsWidth = authorsText.get_width()/2
+turnWidth = turnText.get_width()/2
+resetWidth = resetText.get_width()/2
 
 vectorFontList = [
-    ((WIDTH//2-titleWidth,HEIGHT/6)),  #Title
-    ((WIDTH//2-captionWidth,HEIGHT/3)),  #Caption
-    ((WIDTH//2-authorsWidth,HEIGHT*5/6)) #Authors
+    ((WIDTH//2 - titleWidth, HEIGHT/6)),     #Title
+    ((WIDTH//2 - captionWidth, HEIGHT/3)),   #Caption
+    ((WIDTH//2 - authorsWidth, HEIGHT * 5/6)), #Authors
+    ((WIDTH//2 - turnWidth, EXTRA_SIZE/3)),  #Turn
+    ((WIDTH//2 - resetWidth, HEIGHT2 * 2/3))
     ]
 
 def drawInitScreen():
     pygame.display.set_caption("Menu")
     screen.fill(WHITE)
-    screen.blit(title,vectorFontList[0])
-    screen.blit(caption,vectorFontList[1])
-    screen.blit(authors,vectorFontList[2])
+    screen.blit(titleText, vectorFontList[0])
+    screen.blit(captionText, vectorFontList[1])
+    screen.blit(authorsText, vectorFontList[2])
    
 
 def drawGameScreen():
     pygame.display.set_caption("TicTacToe")
     screen.fill(WHITE)
     pygame.draw.rect(screen, BLACK, (0, 0, WIDTH, EXTRA_SIZE))
+    screen.blit(turnText,vectorFontList[3])
     for i in range(0,len(vectorLinesList),2):
         pygame.draw.line(screen, BLACK, vectorLinesList[i], vectorLinesList[i+1])
-   
+
+
+def drawWinnerScreen(winner):
+    if winner == "O":
+        screen.fill(BLACK)
+        winnerText = font3.render("O wins!", True, BLUE)
+    elif winner == "X":
+        screen.fill(BLACK)
+        winnerText = font3.render("X wins!", True, RED)
+    else:
+        screen.fill(BLACK)
+        winnerText = font3.render("It's a draw!", True, WHITE)
+        
+    
+    winnerWidth = winnerText.get_width()/2
+    screen.blit(winnerText,((WIDTH//2 - winnerWidth, HEIGHT2 * 1/3)))
+
+    screen.blit(resetText,vectorFontList[4])
+    pygame.display.update()
+        
+
 def drawFigures():
     for row in range(3):
         for col in range(3):
@@ -115,8 +145,8 @@ def checkWinner():
         return screenMatrix[0][0]
     if screenMatrix[0][2] == screenMatrix[1][1] == screenMatrix[2][0] and screenMatrix[0][2] is not None:
         return screenMatrix[0][2]
-    else:
-        return None
+    
+    return None
 
 def isDraw():
     for row in screenMatrix:
@@ -125,7 +155,7 @@ def isDraw():
     return True
 
 def gameReset():
-    global screenMatrix, player, gameOver
+    global screenMatrix, player, gameOver, gameScreenStatus
     screenMatrix = [
             [None, None, None],
             [None, None, None],
@@ -134,6 +164,7 @@ def gameReset():
     player = "X"
     gameOver = False
     screen.fill(WHITE)
+    gameScreenStatus = True
     drawGameScreen()
 
 while True:
@@ -145,6 +176,7 @@ while True:
         if initScreenStatus:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 initScreenStatus = False
+                gameScreenStatus = True
                 drawGameScreen()
                 
         else:
@@ -159,24 +191,29 @@ while True:
                     
                     if screenMatrix[clickedRow][clickedCol] is None: 
                         screenMatrix[clickedRow][clickedCol] = player
+                        winner = checkWinner()
+                        if winner:
+                            gameScreenStatus = False
+                            gameOver = True
+                            drawWinnerScreen(winner)
                         
-                        if checkWinner():
-                            gameOver = True
                         elif isDraw():
+                            gameScreenStatus = False
                             gameOver = True
-                    
-                        if player == "X":
-                            player = "O"
+                            drawWinnerScreen(None)
                         else:
-                            player = "X"
+                            player = "O" if player == "X" else "X"
+                            turnText = font.render(f"Turn of {player} !", True, WHITE)
+                            
 
             if gameOver and event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     gameReset()
+                    
 
     if initScreenStatus:
         drawInitScreen()
-    else:
+    elif gameScreenStatus:
         drawGameScreen()
         drawFigures()
     pygame.display.update()
