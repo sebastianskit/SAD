@@ -1,6 +1,7 @@
 import sys
 import pygame
 
+
 pygame.init()
 
 #Colors
@@ -45,6 +46,10 @@ screen = pygame.display.set_mode(TOTAL_SIZE)
 font = pygame.font.Font(None,40)
 font2 = pygame.font.Font(None,30)
 font3 = pygame.font.Font(None,80)
+clickOSound = pygame.mixer.Sound("tictactoe/sounds/click.mp3")
+clickXSound = pygame.mixer.Sound("tictactoe/sounds/click2.mp3")
+winSound = pygame.mixer.Sound("tictactoe/sounds/victory.mp3")
+drawSound = pygame.mixer.Sound("tictactoe/sounds/draw.mp3")
 
 titleText = font.render("Welcome to TicTacToe Game ", True, BLACK)
 captionText = font.render("Press SPACE to Play ", True, BLACK)
@@ -83,23 +88,22 @@ def drawGameScreen():
         pygame.draw.line(screen, BLACK, vectorLinesList[i], vectorLinesList[i+1])
 
 
-def drawWinnerScreen(winner):
+def drawEndScreen(winner):
     if winner == "O":
         screen.fill(BLACK)
-        winnerText = font3.render("O wins!", True, BLUE)
+        endText = font3.render("O wins!", True, BLUE)
     elif winner == "X":
         screen.fill(BLACK)
-        winnerText = font3.render("X wins!", True, RED)
+        endText = font3.render("X wins!", True, RED)
     else:
         screen.fill(BLACK)
-        winnerText = font3.render("It's a draw!", True, WHITE)
+        endText = font3.render("It's a draw!", True, WHITE)
         
     
-    winnerWidth = winnerText.get_width()/2
-    screen.blit(winnerText,((WIDTH//2 - winnerWidth, HEIGHT2 * 1/3)))
+    endWidth = endText.get_width()/2
+    screen.blit(endText,((WIDTH//2 - endWidth, HEIGHT2 * 1/3)))
 
     screen.blit(resetText,vectorFontList[4])
-    pygame.display.update()
         
 
 def drawFigures():
@@ -128,6 +132,12 @@ def drawFigures():
                     (int((col + 1) * WIDTH/3 - SPACE), int(row * HEIGHT/3 + SPACE + EXTRA_SIZE)), 
                     CROSS_WIDTH
                     )
+
+def playSound(player):
+    if player == "O":
+        clickOSound.play()
+    elif player == "X":
+        clickXSound.play()
 
 def checkWinner():
     #Check Rows
@@ -191,16 +201,19 @@ while True:
                     
                     if screenMatrix[clickedRow][clickedCol] is None: 
                         screenMatrix[clickedRow][clickedCol] = player
+                        playSound(player)
                         winner = checkWinner()
                         if winner:
                             gameScreenStatus = False
                             gameOver = True
-                            drawWinnerScreen(winner)
+                            winSound.play()
+                            drawEndScreen(winner)
                         
                         elif isDraw():
                             gameScreenStatus = False
                             gameOver = True
-                            drawWinnerScreen(None)
+                            drawSound.play()
+                            drawEndScreen(None)
                         else:
                             player = "O" if player == "X" else "X"
                             turnText = font.render(f"Turn of {player} !", True, WHITE)
