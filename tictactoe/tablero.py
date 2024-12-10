@@ -370,6 +370,7 @@ while True:
                         elif isDraw():
                             gameScreenStatus = False
                             gameOver = True
+                            drawSound.play()
                             drawEndScreen(None)
                         else:
                             player = "O" if player == "X" else "X"
