@@ -1,34 +1,47 @@
+
+package P2clientTextual;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
-import java.util.Scanner;
 
 public class Client {
-    private static final String SERVER_HOST = "localhost";
-    private static final int SERVER_PORT = 12345;
 
-    public static void main(String[] args) {
-        try (MySocket clientSocket = new MySocket(SERVER_HOST, SERVER_PORT)) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println(clientSocket.readLine()); // Missatge de benvinguda
+    public static void main(String[] args) throws IOException {
 
-            // Thread per llegir missatges del servidor
-            new Thread(() -> {
-                String message;
-                try {
-                    while ((message = clientSocket.readLine()) != null) {
-                        System.out.println(message);
+        MySocket sc = new MySocket(args[0], Integer.parseInt(args[1]));
+
+        BufferedReader BuffR = new BufferedReader(new InputStreamReader(System.in));
+
+        // Input threat (keyboard)
+        new Thread(() -> {
+            String line;
+            try {
+                while ((line = BuffR.readLine()) != null) {
+                    sc.printLine(line);
+                    if (line.matches("exit")) {
+                        sc.close();
+                        break;
                     }
-                } catch (IOException e) {
-                    System.err.println("Error al rebre dades del servidor: " + e.getMessage());
                 }
-            }).start();
-
-            // Thread per enviar missatges al servidor
-            String userInput;
-            while ((userInput = scanner.nextLine()) != null) {
-                clientSocket.println(userInput);
+                sc.printLine("exit");
+                sc.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
-        } catch (IOException e) {
-            System.err.println("Error connectant al servidor: " + e.getMessage());
-        }
+        }).start();
+
+        new Thread(() -> {
+            String line;
+            while ((line = sc.readLine()) != null) {
+                if (line.matches("exit")) {
+                    break;
+                }
+                System.out.println(line);
+            }
+            System.out.println("Client Disconnected!!!");
+            sc.close();
+            System.exit(0);
+        }).start();
     }
 }
