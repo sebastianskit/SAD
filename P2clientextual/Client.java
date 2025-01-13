@@ -1,5 +1,5 @@
 
-package P2clientTextual;
+package P2clientextual;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

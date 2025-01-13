@@ -1,4 +1,4 @@
-package P2clientTextual;
+package P2clientextual;
 
 import java.io.IOException;
 import java.util.Map;

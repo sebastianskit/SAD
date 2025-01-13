@@ -1,5 +1,5 @@
 
-package P2clientTextual;
+package P2clientextual;
 
 import java.net.ServerSocket;
 import java.io.IOException;
