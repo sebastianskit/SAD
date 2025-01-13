@@ -28,6 +28,7 @@ public class ChatServer extends GenericServer {
         }
     }
 
+    @Override
     protected void accept(SelectionKey key) throws IOException {
         super.accept(key);
         clients.add((SocketChannel) key.channel());
