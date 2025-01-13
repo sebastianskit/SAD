@@ -1,44 +1,48 @@
 import java.io.*;
-import java.net.*;
+import java.net.Socket;
 
 public class MySocket {
-    public Socket s;
-    public DataInputStream dis;
-    public DataOutputStream dos;
+    private Socket socket;
+    private BufferedReader in;
+    private PrintWriter out;
 
-    public MySocket(Socket s) {
-        this.s = s;
+    public MySocket(Socket socket) {
+        this.socket = socket;
+        initializeStreams();
+    }
+
+    public MySocket(String host, int port) throws IOException {
+        this.socket = new Socket(host, port);
+        initializeStreams();
+    }
+
+    private void initializeStreams() {
         try {
-            dis = new DataInputStream(s.getInputStream());
-            dos = new DataOutputStream(s.getOutputStream());
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error inicialitzant streams: " + e.getMessage());
         }
     }
 
-    public MySocket(String host, int port) {
-        try {
-            this.s = new Socket(host, port);
-            dis = new DataInputStream(s.getInputStream());
-            dos = new DataOutputStream(s.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void println(String message) {
+        out.println(message);
     }
 
-    public void println(String str) {
-        try {
-            dos.writeUTF(str);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public String readLine() throws IOException {
+        return in.readLine();
     }
 
-    public String readLine() {
+    public void close() {
         try {
-            return dis.readUTF();
+            if (in != null)
+                in.close();
+            if (out != null)
+                out.close();
+            if (socket != null)
+                socket.close();
         } catch (IOException e) {
-            return e.getMessage();
+            System.err.println("Error tancant el socket: " + e.getMessage());
         }
     }
 }

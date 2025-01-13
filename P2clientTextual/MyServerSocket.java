@@ -1,26 +1,23 @@
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.Socket;
 
 public class MyServerSocket {
-    public ServerSocket ss;
+    private ServerSocket serverSocket;
 
-    public MyServerSocket(int port) {
-        try {
-            ss = new ServerSocket(port);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public MyServerSocket(int port) throws IOException {
+        this.serverSocket = new ServerSocket(port);
     }
 
-    public MySocket accept() {
+    public MySocket accept() throws IOException {
+        return new MySocket(serverSocket.accept());
+    }
 
+    public void close() {
         try {
-            Socket s = ss.accept();
-            return new MySocket(s);
+            if (serverSocket != null)
+                serverSocket.close();
         } catch (IOException e) {
-            System.out.println(e);
-            return null;
+            System.err.println("Error tancant el servidor: " + e.getMessage());
         }
     }
 }
