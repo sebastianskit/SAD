@@ -2,6 +2,7 @@
 package P2clientextual;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class Client {
